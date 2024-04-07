@@ -1,3 +1,4 @@
+import argparse
 import torch
 import torch.nn as nn
 import shutil
@@ -15,23 +16,56 @@ from torch.utils.data import DataLoader, random_split
 import wandb
 from torchvision.transforms import RandomCrop, RandomResizedCrop, RandomHorizontalFlip, Resize, CenterCrop, ToTensor, Normalize, Compose
 
-
+arguments = argparse.ArgumentParser()
+arguments.add_argument('-nk' , '--num_kernel',type=int,default=32)
+arguments.add_argument('-ko', '--kernel_organisation' , type=str, help="['same','double','half','default']",default="default")
+arguments.add_argument('-e', '--epochs',  type=int, default=25)
+arguments.add_argument('-ks', '--kernel_size', type=int, default=3)
+arguments.add_argument('-neu','--dense_nodes', type=int,help="number of neurons in dense layer", default=1024)
+arguments.add_argument('-a', '--activation',type=str,help="['ReLU', 'GELU' , 'LeakyReLU' , 'SiLU'' , 'Mish','elu' ]", default = "ReLU")
+args_cmd = arguments.parse_args()
+print(args_cmd.dense_nodes)
 # configuration cell
-epochs = 1
+epochs = args_cmd.epochs
 
 activationFunctions = dict()
-activationFunctions["conv1"] = "ReLU"
-activationFunctions["conv2"] = "ReLU"
-activationFunctions["conv3"] = "ReLU"
-activationFunctions["conv4"] = "ReLU"
-activationFunctions["conv5"] = "ReLU"
-activationFunctions["fc1"] = "ReLU"
-list_kernelSize= [3]*5
-listDropout = [0,0,0.5]
-kernelNumber = [32,32]+[64,64]+[128]
+activationFunctions["conv1"] = args_cmd.activation
+activationFunctions["conv2"] = args_cmd.activation
+activationFunctions["conv3"] = args_cmd.activation
+activationFunctions["conv4"] = args_cmd.activation
+activationFunctions["conv5"] = args_cmd.activation
+activationFunctions["fc1"] = args_cmd.activation
+list_kernelSize= [args_cmd.kernel_size]*5
+listDropout = [0,0,0.3]
+
+#to set number of kernels in each convo layer
+fo=args_cmd.kernel_organisation
+kernelNumber=[]
+first_ker=args_cmd.num_kernel
+if(fo=="same"):
+    for i in range(5):
+        kernelNumber.append(first_ker)
+elif(fo=="double"):
+    for i in range(5):
+        kernelNumber.append(first_ker)
+        first_ker=2*first_ker
+elif(fo=="half"):
+    for i in range(5):
+        if(first_ker<1):
+            first_ker=1
+        kernelNumber.append(first_ker)
+        first_ker=first_ker//2
+elif(fo=="default"):
+    kernelNumber.append(32)
+    kernelNumber.append(32)
+    kernelNumber.append(64)
+    kernelNumber.append(64)
+    kernelNumber.append(128)
+
+# kernelNumber = [32,32]+[64,64]+[128]
 classes = 10
 learningRate = 1e-4
-nodesfc1 = 1024
+nodesfc1 = args_cmd.dense_nodes
 lr_schedule = 1 # per 10 epochs half the learningRate
 modelName = 'Best_CNN_5Layers_iNaturalist'
 
@@ -108,9 +142,11 @@ def activationFun(activation):
 ## Load dataset fn
 def data_load():
     transforms=transform()
-    t1set  = torchvision.datasets.ImageFolder('/kaggle/input/dl-assignment-2-data/inaturalist_12K/train', transforms['training'])
+    #/kaggle/input/dl-assignment-2-data/inaturalist_12K/train
+    t1set  = torchvision.datasets.ImageFolder('/kaggle/input/inature-dataset/inaturalist_12K/train', transforms['training'])
     train, val = random_split(t1set, [8000, 1999])
-    t2set   = torchvision.datasets.ImageFolder('/kaggle/input/dl-assignment-2-data/inaturalist_12K/val', transforms['test'])
+    #/kaggle/input/dl-assignment-2-data/inaturalist_12K/val
+    t2set   = torchvision.datasets.ImageFolder('/kaggle/input/inature-dataset/inaturalist_12K/val', transforms['test'])
     lables = t1set.classes
     return train, val, t2set, lables
 
