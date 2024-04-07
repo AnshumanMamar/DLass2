@@ -35,7 +35,7 @@ The function plot_grid is responsible for generating a visual representation of 
 
 # PART B
 
-## Function for  Data Loading (`load_data`):
+## Function for  Data Loading (`data_load`):
 
 This segment of code is responsible for loading the dataset from the designated directory and applying various transformations to the data to prepare it for training. These transformations typically include resizing the images to a uniform size, performing normalization to ensure consistent data scales.
 
@@ -43,11 +43,9 @@ This segment of code is responsible for loading the dataset from the designated 
 
 This function serves the purpose of training the model over a specified number of epochs. It involves iterating through the dataset, during which the model conducts a forward pass to generate predictions for each batch of data. Subsequently, it computes the loss between the predicted labels and the ground truth labels. 
 
-## Fine-Tuning Model Function (`fine_tune_model`):
 
-This main function is tasked with fine-tuning the GoogleNet model. It manages the entire process, including data loading, model initialization, layer freezing based on a chosen strategy, definition of the loss function and optimizer, and ultimately, training the model using the designated Train function.
 
-## Function for Layer Freezing  (`freeze_layers`):
+## Function for Layer Freezing  (`freeze`):
 
 This function provides the capability to freeze specific layers within the model based on a specified strategy. The freezing process entails preventing the parameters within certain layers from being updated during the training phase. Users can choose to freeze either the first k layers, middle layers, or the last k layers of the model, depending on their preferences and requirements. 
 
