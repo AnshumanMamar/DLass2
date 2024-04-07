@@ -6,8 +6,6 @@ Convolution Neural Network
 
 ## CNN Training Script
 
-This script trains a Convolutional Neural Network (CNN) on a given dataset using PyTorch. It allows for configuring various aspects of the CNN architecture, training process, and hyperparameters through command-line arguments.
-
 This script enables the training of a Convolutional Neural Network (CNN) using PyTorch, providing flexibility in configuring the network architecture, training settings, and hyperparameters through command-line arguments. 
 
 
@@ -20,6 +18,15 @@ specific requirements by adjusting various parameters, offering flexibility in i
 
 1. To begin, ensure you have your dataset prepared and accessible. Update the data_path argument in the script to point to the directory containing your dataset.
 2. Once your dataset is ready and the data_path argument is set, execute the training script with the desired configurations. 
+
+## command line arguments that can be passed to set parameters
+-   Kernel Size : '-ks', '--kernel_size', [3,5] etc
+-   Activation: '-a', '--activation', ['ReLU', 'GELU' , 'LeakyReLU' , "SiLU" , "Mish" "elu"]
+-   Epochs: '-e', '--epochs', [25,20] etc
+-   Dense layer size: '-neu','--dense_nodes', [1024,512] etc
+-   kernel Organisation : '-ko', '--kernel_organisation' ,  ['same','double','half','default']
+-   Num Of Kernels : '-nk' , '--num_kernel' , [16,32] etc
+**Default set to my best configuration**
 
 ## Prediction Function
 
